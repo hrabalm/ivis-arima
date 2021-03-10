@@ -1,0 +1,24 @@
+mysql:
+  host: mariadb
+  user: ivis
+  password: Chahw7aev9re
+  database: ivis
+  port: 3306
+  charset: utf8mb4
+  timezone: local
+
+elasticsearch:
+  host: elasticsearch
+  
+www:
+  trustedPortIsHttps: false
+  sandboxPortIsHttps: false
+  apiPortIsHttps: false
+  trustedUrlBase: http://localhost:8080
+  sandboxUrlBase: http://localhost:8081
+  trustedPort: 8080
+  sandboxPort: 8081
+  apiPort: 8082
+
+redis:
+  enabled: false

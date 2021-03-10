@@ -1,0 +1,4 @@
+[submodule "ivis/ivis-core"]
+	path = ivis/ivis-core
+	url = https://github.com/hrabalm/ivis-core
+	branch = arima-devel-b
