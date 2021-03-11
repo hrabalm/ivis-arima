@@ -27,7 +27,7 @@ services:
     image: arima-docker
     depends_on:
       - mariadb
-    command: sh -c "cd /opt/ivis/server && sleep 10 && node index.js"
+    #command: sh -c "cd /opt/ivis/server && sleep 10 && node index.js"
     ports:
       - 8080:8080
       - 8081:8081

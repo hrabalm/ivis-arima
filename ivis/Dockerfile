@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-venv \
     python3-pip \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ivis-core/server/package*.json /opt/ivis/server/
@@ -32,3 +33,9 @@ EXPOSE 8080 8081 8082
 WORKDIR /opt/ivis/server
 
 COPY arima.yaml /opt/ivis/server/config/arima.yaml
+
+COPY ./docker-entrypoint.sh /
+
+COPY ./seeds/ /seeds
+
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
