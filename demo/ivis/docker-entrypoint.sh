@@ -16,5 +16,13 @@ done
     ../node_modules/.bin/knex seed:run
 )
 
+if [ $NODE_WATCH ]
+then
+    (
+        cd /opt/ivis/client
+        npm run watch
+    ) & 
+fi
+
 # start ivis server
 cd /opt/ivis/server && sleep 1 && node index.js

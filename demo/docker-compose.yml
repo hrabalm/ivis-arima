@@ -23,19 +23,20 @@ services:
       - 9992:9200 # for debugging
 
   ivis:
-    build: .
+    build: ivis
     image: arima-docker
     depends_on:
       - mariadb
-    #command: sh -c "cd /opt/ivis/server && sleep 10 && node index.js"
+      - elasticsearch
     ports:
       - 8080:8080
       - 8081:8081
       - 8082:8082
     environment:
       - NODE_ENV=arima
+      - NODE_WATCH=1
     volumes:
-      - ./arima.yaml:/opt/ivis/server/config/arima.yaml
+      - ./ivis/config/arima.yaml:/opt/ivis/server/config/arima.yaml
 
 volumes:
   arima-mariadb:

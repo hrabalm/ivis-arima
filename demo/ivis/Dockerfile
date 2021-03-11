@@ -32,7 +32,7 @@ EXPOSE 8080 8081 8082
 
 WORKDIR /opt/ivis/server
 
-COPY arima.yaml /opt/ivis/server/config/arima.yaml
+COPY ./config/arima.yaml /opt/ivis/server/config/arima.yaml
 
 COPY ./docker-entrypoint.sh /
 
