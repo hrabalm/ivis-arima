@@ -21,6 +21,8 @@ WORKDIR /opt/ivis/
 
 COPY ivis-core /opt/ivis
 
+COPY lib /opt/ivis/server/lib/tasks/python/ivis/
+
 WORKDIR /opt/ivis/server/lib/tasks/python/ivis
 RUN python3 -m pip install --upgrade setuptools wheel && python3 setup.py sdist bdist_wheel
 
