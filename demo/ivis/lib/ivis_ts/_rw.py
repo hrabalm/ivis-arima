@@ -11,7 +11,7 @@ import datetime as dt
 import dateutil as du
 
 try:
-    import ivis
+    from ivis import ivis
 except:
     class ivis:  # stub for local testing
         elasticsearch = es.Elasticsearch('localhost')
