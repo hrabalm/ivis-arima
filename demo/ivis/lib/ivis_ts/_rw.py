@@ -23,13 +23,15 @@ class TsWriter:
 
 
 class TsReader:
-    def __init__(self, index_name, ts_field, value_field):
+    def __init__(self, index_name, ts_field, value_field, from_ts='', to_ts=''):
         self.index_name = index_name
         self.ts_field = ts_field
         self.value_field = value_field
 
-        #self.latest_ts = dt.datetime.min
         self.latest_ts = None
+
+        self.from_ts = from_ts
+        self.to_ts = to_ts
 
     def set_latest(self, ts):
         self.latest_ts = ts
@@ -40,6 +42,11 @@ class TsReader:
     def _read(self):
         s = dsl.Search(using=ivis.elasticsearch, index=self.index_name).sort(
             {self.ts_field: 'asc'})
+
+        if self.from_ts:
+            s = s.filter('range', **{self.ts_field: {'gte': self.from_ts}})
+        if self.to_ts:
+            s = s.filter('range', **{self.ts_field: {'lt': self.to_ts}})
 
         if self.latest_ts:  # query only not yet seen values
             s = s.filter('range', **{self.ts_field: {'gt': self.latest_ts}})
