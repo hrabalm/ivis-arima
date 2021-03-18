@@ -255,9 +255,29 @@ class TsAggReader:
         res = s.execute()
         return res
 
+class TsDelta: # invent future timestamps
+    def __init__(self, last_ts, delta_time):
+        self.valid = False
+        self.last_ts = last_ts
+        self.delta_time = delta_time
+
+    def _next_ts(self):
+        return self.last_ts + self.delta_time
+
+    def peek(self): # preview next timestamp
+        return self._next_ts()
+
+    def read(self): # read (and consume) next timestamp
+        self.last_ts = self._next_ts()
+        return self.last_ts
+
+class TsDeltaLogical:
+    def __init__(self, last_ts, interval):  # for things like 1 month
+        pass
 
 class PredWriter:
-    def __init__(self):
+    # note: has to handle delta estimation - via object we give to it
+    def __init__(self, tsdelta):
         pass
 
 
