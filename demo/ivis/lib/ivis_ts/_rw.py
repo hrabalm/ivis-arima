@@ -9,12 +9,23 @@ except:
     import elasticsearch_dsl as dsl
 import datetime as dt
 import dateutil as du
+import numpy as np
+import pendulum
 
 try:
     from ivis import ivis
 except:
     class ivis:  # stub for local testing
         elasticsearch = es.Elasticsearch('localhost')
+
+DATEFORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
+
+def _string2date(s: str):
+    # convert timestamps to pendulum.DateTime
+    return pendulum.from_format(s, DATEFORMAT)
+
+def _date2string(date: pendulum.DateTime):
+    return date.format(DATEFORMAT)
 
 
 class TsWriter:
@@ -68,6 +79,9 @@ class TsReader:
 
         if len(timestamps) > 0:
             self.set_latest(timestamps[-1])
+
+        # convert string timestamps to pendulum.DateTime
+        timestamps = [_string2date(x) for x in timestamps]
 
         return timestamps, values
 
@@ -255,8 +269,55 @@ class TsAggReader:
         res = s.execute()
         return res
 
+def estimate_delta(timestamps, sample_size=1000):
+    # timestamps is of [pendulum.DateTime]
+    last_ts = timestamps[-1] # TODO
+    # Only take sample of sample_size into account. We are taking a median here
+    # to compansate for *a few* ptential missing values. In case there are many,
+    # data should definitely somehow preprocessed.
+
+    # Default value of 1000 might be a bit of a overkill, but it should still be
+    # reasonably fast to process. We on the other hand don't want to unnecessarily
+    # go through all the data to find the exact median, because we presume the
+    # data to be evenly spaced, except for a few potential missing values.
+    timestamps = timestamps[:sample_size]
+
+    # convert timestamps to floats for a bit
+    timestamps = [x.float_timestamp for x in timestamps]
+    # take difference between each two following timestamps
+    zipped = zip(timestamps[1:], timestamps[:-1])
+    differences = [x[0] - x[1] for x in zipped]
+    # TODO: doing this in numpy would have been faster?
+    median = np.median(differences)
+
+    # convert back to pendulum
+    delta_time = pendulum.duration(seconds=median)
+    return TsDelta(last_ts, delta_time)
+
+def logical_delta(interval):
+    intervals = {
+        'ms': pendulum.Duration(milliseconds=1),
+        's': pendulum.Duration(seconds=1),
+        'm': pendulum.Duration(minutes=1),
+        'h': pendulum.Duration(hours=1),
+        'd': pendulum.Duration(days=1),
+        'M': pendulum.duration(months=1),
+        'q': pendulum.duration(months=3),  # FIXME: Does this work?
+        'y': pendulum.duration(years=1)
+    }
+
+    # Note: This also parses some weird things like '1M0' (like '10M')
+    # it might be better to explicitly check the format and raise exception?
+    num = ''.join([x for x in interval if x.isdigit()])
+    marker = ''.join([x for x in interval if not x.isdigit()])
+
+    try:
+        return int(num) * intervals[marker]
+    except KeyError:
+        raise ValueError
+
 class TsDelta: # invent future timestamps
-    def __init__(self, last_ts, delta_time):
+    def __init__(self, last_ts, delta_time: pendulum.Duration):
         self.valid = False
         self.last_ts = last_ts
         self.delta_time = delta_time
@@ -271,9 +332,11 @@ class TsDelta: # invent future timestamps
         self.last_ts = self._next_ts()
         return self.last_ts
 
-class TsDeltaLogical:
-    def __init__(self, last_ts, interval):  # for things like 1 month
-        pass
+    def set_latest(self, latest_ts):
+        self.last_ts = latest_ts
+
+    def copy(self):
+        return TsDelta(self.last_ts, self.delta_time)
 
 class PredWriter:
     # note: has to handle delta estimation - via object we give to it
