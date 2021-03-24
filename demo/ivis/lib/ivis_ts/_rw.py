@@ -338,9 +338,55 @@ class TsDelta: # invent future timestamps
     def copy(self):
         return TsDelta(self.last_ts, self.delta_time)
 
+
+def _pred_signals(namespace: int):
+    SIGNALS = [
+        {
+            "cid": "ts",
+            "name": "ts",
+            "description": "ts",
+            "namespace": namespace,
+            "type": "date",
+            "indexed": True,
+            "settings": {}
+        },
+        {
+            "cid": "predicted_value",
+            "name": "predicted_value",
+            "description": "predicted_value",
+            "namespace": namespace,
+            "type": "double",
+            "indexed": False,
+            "settings": {}
+        },
+        {  # We may not do cofidence intervals after all
+            "cid": "ci_max",
+            "name": "ci_max",
+            "description": "ci_max",
+            "namespace": namespace,
+            "type": "double",
+            "indexed": False,
+            "settings": {}
+        },
+        {
+            "cid": "ci_min",
+            "name": "ci_min",
+            "description": "ci_min",
+            "namespace": namespace,
+            "type": "double",
+            "indexed": False,
+            "settings": {}
+        }
+    ]
+
+    return SIGNALS
+
 class PredWriter:
     # note: has to handle delta estimation - via object we give to it
     def __init__(self, tsdelta):
+        pass
+
+    def write1(self, ts, pred):
         pass
 
 
