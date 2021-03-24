@@ -381,10 +381,16 @@ def _pred_signals(namespace: int):
 
     return SIGNALS
 
+def _create_predictions_signal_set(set_name: str, namespace: int):
+    return ivis.create_signal_set(set_name, namespace, set_name, set_name, signals=_pred_signals(namespace))
+
+def _get_field(set_name: str, field_name: str):
+    return ivis.entities['signals'][set_name][field_name]['field']
+
 class PredWriter:
     # note: has to handle delta estimation - via object we give to it
-    def __init__(self, tsdelta):
-        pass
+    def __init__(self, index_name, time_delta):
+        self.time_delta = time_delta
 
     def write1(self, ts, pred):
         pass
