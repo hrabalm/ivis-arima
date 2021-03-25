@@ -7,34 +7,35 @@ RUN apt-get update && apt-get install -y \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ivis-core/server/package*.json /opt/ivis/server/
-COPY ivis-core/client/package*.json /opt/ivis/client/
-COPY ivis-core/shared/package*.json /opt/ivis/shared/
+COPY ivis-core/server/package*.json /opt/demo/ivis-core/server/
+COPY ivis-core/client/package*.json /opt/demo/ivis-core/client/
+COPY ivis-core/shared/package*.json /opt/demo/ivis-core/shared/
+COPY server /opt/demo/server/
 
-WORKDIR /opt/ivis/
+WORKDIR /opt/demo/ivis-core
 
 # use all cores during binary builds
 ENV JOBS=max
 RUN for nd in server client shared; do (cd $nd && npm ci); done
 
-WORKDIR /opt/ivis/
+WORKDIR /opt/demo
 
-COPY ivis-core /opt/ivis
+COPY ivis-core /opt/demo/ivis-core
 
-COPY lib /opt/ivis/server/lib/tasks/python/ivis/
+COPY lib /opt/demo/ivis-core/server/lib/tasks/python/ivis/
 
-WORKDIR /opt/ivis/server/lib/tasks/python/ivis
+WORKDIR /opt/demo/ivis-core/server/lib/tasks/python/ivis
 RUN python3 -m pip install --upgrade setuptools wheel && python3 setup.py sdist bdist_wheel
 
-WORKDIR /opt/ivis/
+WORKDIR /opt/demo/ivis-core/
 
 RUN cd client && npm run build
 
 EXPOSE 8080 8081 8082
 
-WORKDIR /opt/ivis/server
+WORKDIR /opt/demo/ivis-core/server
 
-COPY ./config/arima.yaml /opt/ivis/server/config/arima.yaml
+COPY ./config/arima.yaml /opt/demo/ivis-core/server/config/arima.yaml
 
 COPY ./docker-entrypoint.sh /
 

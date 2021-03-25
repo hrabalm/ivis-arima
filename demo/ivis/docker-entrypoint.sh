@@ -19,10 +19,10 @@ done
 if [ $NODE_WATCH ]
 then
     (
-        cd /opt/ivis/client
+        cd /opt/demo/ivis-core/client
         npm run watch
-    ) & 
+    ) &
 fi
 
 # start ivis server
-cd /opt/ivis/server && sleep 1 && node index.js
+cd /opt/demo/server && sleep 1 && node index.js
