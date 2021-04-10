@@ -13,6 +13,7 @@ class ArimaPredictor:
     has to remember a constant number of latest observations (Depending on
     model orders). It also supports adding new observations without refitting.
     """
+
     def __init__(self, model, data):
         """Create an instance of ARIMA predictor from existing instance of
         pmdarima.ARIMA
@@ -49,7 +50,7 @@ class ArimaPredictor:
 
     def _add1(self, x):  # add a new observation `x` to the model
         prediction = self.predict(1)[0]
-        residual = abs(x - prediction)
+        residual = (x - prediction)
 
         # Note: append creates copy of the whole array
         self.data = np.append(self.data, x)
@@ -141,6 +142,7 @@ class ArimaPredictor:
         if len(self.data) > self.max_size:
             self.data = self.data[-self.max_size:]
             self.residuals = self.residuals[-self.max_size:]
+
 
 if __name__ == "__main__":
     pass
