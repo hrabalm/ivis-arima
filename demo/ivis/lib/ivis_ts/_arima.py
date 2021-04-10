@@ -143,35 +143,4 @@ class ArimaPredictor:
             self.residuals = self.residuals[-self.max_size:]
 
 if __name__ == "__main__":
-    def test():
-        """Temporary test
-        """
-        data = pm.datasets.load_wineind()
-
-        arima = pm.ARIMA((4, 1, 5))
-        arima.fit(data)
-
-        # arima = pm.auto_arima(data)
-        # print("order:", arima.order)
-
-        # print(type(arima))
-        # print(isinstance(arima, pm.arima.ARIMA))
-        # print(isinstance(arima, sm.tsa.statespace.sarimax.SARIMAX))
-        # print(isinstance(arima, sm.tsa.statespace.sarimax.SARIMAXResults))
-
-        m = ArimaPredictor(arima, data)
-        print("my:", m.predict())
-        print("pmd:", arima.predict(1)[0])
-
-        print("my:", m.predict(5))
-        print("pmd:", arima.predict(5))
-
-        # this doesn't meaningfully test anything, because pmdarima refits the model
-        # slightly (which is part of the reason why we implement this on our own)
-        m.append([30000, 30000, 30000, 30000])
-        print("my:", m.predict(5))
-        arima.update([30000, 30000, 30000, 30000])
-        print("pmd:", arima.predict(5))
-
-
-    test()
+    pass
