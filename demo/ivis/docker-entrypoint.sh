@@ -7,10 +7,10 @@ do
     sleep 1
 done
 
-# run knex seed TODO: check environment for SEED?
+# run knex seed
 (
     cd knex
-    rm seeds/* # remove stocks seeds
+    rm seeds/* # remove stock seeds
     cp /seeds/* seeds/
     ../node_modules/.bin/knex migrate:latest # we have to run migrations before seed
     ../node_modules/.bin/knex seed:run
