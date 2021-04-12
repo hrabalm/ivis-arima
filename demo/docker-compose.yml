@@ -35,8 +35,6 @@ services:
     environment:
       - NODE_ENV=arima
       - NODE_WATCH=1
-    volumes:
-      - ./ivis/config/arima.yaml:/opt/ivis/server/config/arima.yaml
 
 volumes:
   arima-mariadb:
