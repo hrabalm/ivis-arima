@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
 COPY ivis-core/server/package*.json /opt/demo/ivis-core/server/
 COPY ivis-core/client/package*.json /opt/demo/ivis-core/client/
 COPY ivis-core/shared/package*.json /opt/demo/ivis-core/shared/
-COPY server /opt/demo/server/
 
 WORKDIR /opt/demo/ivis-core
 
@@ -21,6 +20,8 @@ RUN for nd in server client shared; do (cd $nd && npm ci); done
 WORKDIR /opt/demo
 
 COPY ivis-core /opt/demo/ivis-core
+
+COPY server /opt/demo/server/
 
 COPY lib /opt/demo/ivis-core/server/lib/tasks/python/ivis/
 
