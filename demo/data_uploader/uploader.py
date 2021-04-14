@@ -18,6 +18,7 @@ x = {
     'arbitrary_float_2': 0,
 }
 
+DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
 
 def upload_csv():
     pass
@@ -92,7 +93,7 @@ def process_csv_file(filename):
             print('ts:', ts)
             signals = {k: v for k, v in value.items() if k != ts_field}
             print('signals:', signals)
-            ts = ts.to_date_string()
+            ts = ts.format(DATE_FORMAT)
 
             if i == 0:
                 name = filename.split('.')[0]
