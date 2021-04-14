@@ -78,9 +78,6 @@ def create_signal_set(cid, name, signals=[]):
 
 def upload_record(setCid, record):
     setId = 4
-    data = {
-
-    }
     resp = requests.post('http://localhost:8082/api/signal-set-records/' + str(setId), headers=headers, json=record)
     print(record)
 
@@ -100,9 +97,9 @@ def process_csv_file(filename):
             if i == 0:
                 name = filename.split('.')[0]
                 create_signal_set(name, name, [k for k in signals])
-                upload_record(name, {'id': ts, 'ts': ts, **signals})
+                upload_record(name, {'id': ts, 'signals': {'ts': ts, **signals}})
             else:
-                upload_record(name, {'id': ts, 'ts': ts, **signals})
+                upload_record(name, {'id': ts, 'signals': {'ts': ts, **signals}})
 
 
 
