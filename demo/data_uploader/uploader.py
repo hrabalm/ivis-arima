@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import json
+import csv
 import requests
+import pendulum
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
@@ -57,6 +59,8 @@ def create_signal_set(cid, name, signals=[]):
     resp = requests.post(
         'http://localhost:8082/api/signal-sets', headers=headers, json=data)
 
+    # create signals other than 'ts', which is added automatically because
+    # kind = 'time_series'
     for signal in signals:
         data = {
             'cid': signal,
@@ -65,9 +69,41 @@ def create_signal_set(cid, name, signals=[]):
             'settings': '{}',
             'set': cid,
             'namespace': 1,
+            'source': 'raw',
+            'weight_list': 0,  # make signals visible in client
         }
 
         resp = requests.post('http://localhost:8082/api/signals/' + cid, headers=headers, json=data);
+        print(resp.json())
+
+def upload_record(setCid, record):
+    setId = 4
+    data = {
+
+    }
+    resp = requests.post('http://localhost:8082/api/signal-set-records/' + str(setId), headers=headers, json=record)
+    print(record)
+
+def process_csv_file(filename):
+    ts_field = 'ts'
+    with open(filename, mode='r') as file:
+        reader = csv.DictReader(file, delimiter=',')
+
+        for i, value in enumerate(reader):
+            ts = value[ts_field]
+            ts = pendulum.parse(ts)
+            print('ts:', ts)
+            signals = {k: v for k, v in value.items() if k != ts_field}
+            print('signals:', signals)
+            ts = ts.to_date_string()
+
+            if i == 0:
+                name = filename.split('.')[0]
+                create_signal_set(name, name, [k for k in signals])
+                upload_record(name, {'id': ts, 'ts': ts, **signals})
+            else:
+                upload_record(name, {'id': ts, 'ts': ts, **signals})
+
 
 
 def main():
@@ -89,3 +125,4 @@ if __name__ == '__main__':
                 key=API_KEY)
     main()
     #create_signal_set('testSignalSet', 'Test Signal Set', ['ahoj'])
+    process_csv_file('test.csv')
