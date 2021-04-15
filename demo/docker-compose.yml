@@ -43,6 +43,9 @@ services:
       - API_BASE=http://ivis:8082/api
       - DB_HOST=mariadb
       - DB_PORT=3306
+      - DB_DB=ivis
+      - DB_USER=ivis
+      - DB_PASS=Chahw7aev9re
 
 volumes:
   arima-mariadb:

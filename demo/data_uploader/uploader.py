@@ -14,11 +14,20 @@ API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
 API_BASE = 'http://localhost:8082/api'
 MYSQL_HOST = 'localhost'
 MYSQL_PORT = 9991
+MYSQL_DB = 'ivis'
+MYSQL_USER = 'ivis'
+MYSQL_PASS = 'password'
 
 if os.environ.get('DB_HOST'):
     MYSQL_HOST = os.environ.get('DB_HOST')
 if os.environ.get('DB_PORT'):
     MYSQL_PORT = os.environ.get('DB_PORT')
+if os.environ.get('DB_DB'):
+    MYSQL_DB = os.environ.get('DB_DB')
+if os.environ.get('DB_USER'):
+    MYSQL_USER = os.environ.get('DB_USER')
+if os.environ.get('DB_PASS'):
+    MYSQL_PASS = os.environ.get('DB_PASS')
 if os.environ.get('API_BASE'):
     API_BASE = os.environ.get('API_BASE')
 
@@ -236,9 +245,9 @@ if __name__ == '__main__':
     time.sleep(20)
     set_api_key(dbhost=MYSQL_HOST,
                 dbport=MYSQL_PORT,
-                dbuser='ivis',
-                dbpass='Chahw7aev9re',
-                dbname='ivis',
+                dbuser=MYSQL_USER,
+                dbpass=MYSQL_PASS,
+                dbname=MYSQL_DB,
                 key=API_KEY)
     main()
 
