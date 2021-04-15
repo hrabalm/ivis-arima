@@ -36,6 +36,14 @@ services:
       - NODE_ENV=arima
       - NODE_WATCH=1
 
+  uploader:
+    build: data_uploader
+    image: data_uploader
+    environment:
+      - API_BASE=http://ivis:8082/api
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+
 volumes:
   arima-mariadb:
   arima-elasticsearch:

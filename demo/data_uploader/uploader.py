@@ -7,10 +7,20 @@ import requests
 import pendulum
 import uuid
 import multiprocessing
+import os
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
 API_BASE = 'http://localhost:8082/api'
+MYSQL_HOST = 'localhost'
+MYSQL_PORT = 9991
+
+if os.environ.get('DB_HOST'):
+    MYSQL_HOST = os.environ.get('DB_HOST')
+if os.environ.get('DB_PORT'):
+    MYSQL_PORT = os.environ.get('DB_PORT')
+if os.environ.get('API_BASE'):
+    API_BASE = os.environ.get('API_BASE')
 
 headers = {
     'access-token': API_KEY
@@ -223,8 +233,9 @@ def main():
 
 
 if __name__ == '__main__':
-    set_api_key(dbhost='localhost',
-                dbport=9991,
+    time.sleep(20)
+    set_api_key(dbhost=MYSQL_HOST,
+                dbport=MYSQL_PORT,
                 dbuser='ivis',
                 dbpass='Chahw7aev9re',
                 dbname='ivis',
