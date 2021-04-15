@@ -2,8 +2,11 @@
 
 import json
 import csv
+import time
 import requests
 import pendulum
+import uuid
+import multiprocessing
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
@@ -77,7 +80,7 @@ def create_signal_set(cid, name, signals=[]):
 
 def upload_record(setId, record):
     resp = requests.post(API_BASE + '/signal-set-records/' + str(setId), headers=headers, json=record)
-    print(resp.json())
+    print("record text:", resp.text)
 
 def shift_csv_file(filename, output, shift='y', ts_field='ts'):
     # firstly, find first and last timestamp
@@ -139,11 +142,8 @@ def process_csv_file(set_cid, set_name, filename):
         reader = csv.DictReader(file, delimiter=',')
 
         for i, value in enumerate(reader):
-            ts = value[ts_field]
-            ts = pendulum.parse(ts)
-            #print('ts:', ts)
+            ts = pendulum.parse(value[ts_field])
             signals = {k: v for k, v in value.items() if k != ts_field}
-            #print('signals:', signals)
             ts_str = ts.format(DATE_FORMAT)
 
             if i == 0:
@@ -154,6 +154,60 @@ def process_csv_file(set_cid, set_name, filename):
                 upload_record(setId, {'id': ts_str, 'signals': {'ts': ts_str, **signals}})
 
 
+def upload_csv2(set_cid: str, set_name: str, filename: str, ts_field='ts'):
+    with open(filename, mode='r') as file:
+        reader = csv.DictReader(file, delimiter=',')
+
+        for i, row in enumerate(reader):
+            ts = pendulum.parse(row[ts_field])
+            ts_str = ts.format(DATE_FORMAT)
+            signals = {k: v for k, v in row.items() if k != ts_field}
+            signals_with_ts = {'ts': ts_str, **signals}
+
+            if i == 0:
+                setId = create_signal_set(
+                    set_cid, set_name, [k for k in signals])
+
+            wait_for_ts(ts)
+
+            record = {'id': ts_str, 'signals': signals_with_ts}
+            upload_record(setId, record)
+
+
+def upload_csv_shifted(set_cid: str, set_name: str, filename: str, ts_field='ts', shift='y'):
+    shifted_name = filename + str(uuid.uuid4()) + '.shifted'
+    shift_csv_file(filename, shifted_name, shift=shift, ts_field=ts_field)
+    upload_csv2(set_cid, set_name, shifted_name, ts_field)
+
+def upload_csv_wait(set_cid: str, set_name: str, filename: str, batch_size, ts_field='ts', wait_seconds=10):
+    """Upload first `batch_size` rows in a batch and then add records one by
+    one with specified wait time.
+
+    Args:
+        set_cid (str): [description] Signal set cid
+        set_name (str): [description] Signal set name
+        filename (str): [description] Source csv file
+        batch_size ([type]): [description]
+        ts_field (str, optional): [description]. Defaults to 'ts'.
+        wait_seconds (int, optional): [description]. Defaults to 10.
+    """
+    with open(filename, mode='r') as file:
+        reader = csv.DictReader(file, delimiter=',')
+
+        for i, row in enumerate(reader):
+            ts = pendulum.parse(row[ts_field])
+            ts_str = ts.format(DATE_FORMAT)
+            signals = {k: v for k, v in row.items() if k != ts_field}
+            signals_with_ts = {'ts': ts_str, **signals}
+
+            if i == 0:
+                setId = create_signal_set(set_cid, set_name, [k for k in signals])
+
+            if i >= batch_size:
+                time.sleep(wait_seconds)
+
+            record = {'id': ts_str, 'signals': signals_with_ts}
+            upload_record(setId, record)
 
 def main():
     resp = requests.get(
@@ -176,7 +230,17 @@ if __name__ == '__main__':
                 dbname='ivis',
                 key=API_KEY)
     main()
-    #create_signal_set('testSignalSet', 'Test Signal Set', ['ahoj'])
-    shift_csv_file('test.csv', 'shifted.csv')
-    #shift_csv_file('shifted.csv', 'shifted2.csv')
-    process_csv_file('co2-shifted-8', 'CO2 Shifted', 'shifted.csv')
+
+    def f():
+        upload_csv_wait('wait5_'+str(uuid.uuid4()), 'With Wait', 'test.csv', 1000, wait_seconds=5)
+
+    def g():
+        upload_csv_wait('wait1_'+str(uuid.uuid4()), 'With Wait',
+                        'test.csv', 1000, wait_seconds=1)
+
+    p1 = multiprocessing.Process(target=f)
+    p2 = multiprocessing.Process(target=g)
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
