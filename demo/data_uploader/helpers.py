@@ -43,11 +43,6 @@ headers = {
 
 DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
 
-
-def upload_csv():
-    pass
-
-
 def set_api_key(dbhost, dbport, dbuser, dbpass, dbname, key):
     """Directly set the access_token to key in the database
 
@@ -192,7 +187,7 @@ def process_csv_file(set_cid, set_name, filename):
                               'ts': ts_str, **signals}})
 
 
-def upload_csv2(set_cid: str, set_name: str, filename: str, ts_field='ts'):
+def upload_csv(set_cid: str, set_name: str, filename: str, ts_field='ts'):
     with open(filename, mode='r') as file:
         reader = csv.DictReader(file, delimiter=',')
 
@@ -215,7 +210,7 @@ def upload_csv2(set_cid: str, set_name: str, filename: str, ts_field='ts'):
 def upload_csv_shifted(set_cid: str, set_name: str, filename: str, ts_field='ts', shift='y'):
     shifted_name = filename + str(uuid.uuid4()) + '.shifted'
     shift_csv_file(filename, shifted_name, shift=shift, ts_field=ts_field)
-    upload_csv2(set_cid, set_name, shifted_name, ts_field)
+    upload_csv(set_cid, set_name, shifted_name, ts_field)
 
 
 def upload_csv_wait(set_cid: str, set_name: str, filename: str, batch_size, ts_field='ts', wait_seconds=10):
