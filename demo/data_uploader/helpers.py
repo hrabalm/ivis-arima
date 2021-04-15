@@ -11,6 +11,8 @@ import os
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
+API_HOST = 'localhost'
+API_PORT = 8080
 API_BASE = 'http://localhost:8082/api'
 MYSQL_HOST = 'localhost'
 MYSQL_PORT = 9991
@@ -28,6 +30,10 @@ if os.environ.get('DB_USER'):
     MYSQL_USER = os.environ.get('DB_USER')
 if os.environ.get('DB_PASS'):
     MYSQL_PASS = os.environ.get('DB_PASS')
+if os.environ.get('API_HOST'):
+    API_HOST = os.environ.get('API_HOST')
+if os.environ.get('API_PORT'):
+    API_PORT = int(os.environ.get('API_PORT'))
 if os.environ.get('API_BASE'):
     API_BASE = os.environ.get('API_BASE')
 
@@ -244,4 +250,37 @@ def upload_csv_wait(set_cid: str, set_name: str, filename: str, batch_size, ts_f
             upload_record(setId, record)
 
 def wait_for_ivis():
-    pass
+    """Wait for IVIS service to start
+    """
+    import socket
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((API_HOST, API_PORT))
+            s.sendall(b'\x00')
+        except:
+            time.sleep(1)
+            continue
+        else:
+            break
+
+
+class ProcessManager:
+    def __init__(self):
+        self.processes = []
+
+    def add_process(self, function):
+        self.processes.append(multiprocessing.Process(target=function))
+
+    def add_processes(self, functions):
+        for f in functions:
+            self.add_process(f)
+
+    def start(self):
+        for p in self.processes:
+            p.start()
+
+    def join(self):
+        for p in self.processes:
+            p.join()
+
