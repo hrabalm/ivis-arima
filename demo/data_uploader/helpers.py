@@ -43,6 +43,7 @@ headers = {
 
 DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
 
+
 def set_api_key(dbhost, dbport, dbuser, dbpass, dbname, key):
     """Directly set the access_token to key in the database
 
@@ -244,6 +245,7 @@ def upload_csv_wait(set_cid: str, set_name: str, filename: str, batch_size, ts_f
             record = {'id': ts_str, 'signals': signals_with_ts}
             upload_record(setId, record)
 
+
 def wait_for_ivis():
     """Wait for IVIS service to start
     """
@@ -278,4 +280,3 @@ class ProcessManager:
     def join(self):
         for p in self.processes:
             p.join()
-
