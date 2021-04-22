@@ -43,11 +43,11 @@ services:
       - API_HOST=ivis
       - API_PORT=8082
       - API_BASE=http://ivis:8082/api
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_DB=ivis
-      - DB_USER=ivis
-      - DB_PASS=Chahw7aev9re
+      - MYSQL_HOST=mariadb
+      - MYSQL_PORT=3306
+      - MYSQL_DB=ivis
+      - MYSQL_USER=ivis
+      - MYSQL_PASS=Chahw7aev9re
 
 volumes:
   arima-mariadb:
