@@ -11,31 +11,42 @@ import os
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
-API_HOST = 'localhost'
-API_PORT = 8080
-API_BASE = 'http://localhost:8082/api'
-MYSQL_HOST = 'localhost'
-MYSQL_PORT = 9991
-MYSQL_DB = 'ivis'
-MYSQL_USER = 'ivis'
-MYSQL_PASS = 'password'
 
-if os.environ.get('DB_HOST'):
-    MYSQL_HOST = os.environ.get('DB_HOST')
-if os.environ.get('DB_PORT'):
-    MYSQL_PORT = os.environ.get('DB_PORT')
-if os.environ.get('DB_DB'):
-    MYSQL_DB = os.environ.get('DB_DB')
-if os.environ.get('DB_USER'):
-    MYSQL_USER = os.environ.get('DB_USER')
-if os.environ.get('DB_PASS'):
-    MYSQL_PASS = os.environ.get('DB_PASS')
-if os.environ.get('API_HOST'):
-    API_HOST = os.environ.get('API_HOST')
-if os.environ.get('API_PORT'):
-    API_PORT = int(os.environ.get('API_PORT'))
-if os.environ.get('API_BASE'):
-    API_BASE = os.environ.get('API_BASE')
+needed_env = [
+    'MYSQL_HOST',
+    'MYSQL_PORT',
+    'MYSQL_DB',
+    'MYSQL_USER',
+    'MYSQL_PASS',
+    'API_HOST',
+    'API_PORT',
+    'API_BASE'  # e.g. http://ivis:8082/api
+]
+
+def load_env(name, needed=True):
+    if os.environ.get(name):
+        print("Loading", name)
+        exec(f'''globals()["{name}"] = "{os.environ.get(name)}"''')
+    elif not needed:
+        pass
+    else:
+        print("Missing", name)
+    print(len(globals()))
+
+def load_envs():
+    for v in needed_env:
+        load_env(v)
+
+def print_envs():
+    for v in needed_env:
+        try:
+            print(f'{v} = "{eval(v)}"')
+        except:
+            pass
+    print("", end="", flush=True)
+
+load_envs()
+print_envs()
 
 headers = {
     'access-token': API_KEY
@@ -253,13 +264,14 @@ def wait_for_ivis():
     while True:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((API_HOST, API_PORT))
+            s.connect((API_HOST, int(API_PORT)))
             s.sendall(b'\x00')
         except:
+            print(f"Waiting for IVIS at {API_HOST}:{API_PORT}", flush=True)
             time.sleep(1)
             continue
         else:
-            break
+            return
 
 
 class ProcessManager:
