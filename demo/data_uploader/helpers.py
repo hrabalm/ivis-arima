@@ -8,45 +8,10 @@ import pendulum
 import uuid
 import multiprocessing
 import os
+from config import config as c
 
 # this key will be inserted into db
 API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
-
-needed_env = [
-    'MYSQL_HOST',
-    'MYSQL_PORT',
-    'MYSQL_DB',
-    'MYSQL_USER',
-    'MYSQL_PASS',
-    'API_HOST',
-    'API_PORT',
-    'API_BASE'  # e.g. http://ivis:8082/api
-]
-
-def load_env(name, needed=True):
-    if os.environ.get(name):
-        print("Loading", name)
-        exec(f'''globals()["{name}"] = "{os.environ.get(name)}"''')
-    elif not needed:
-        pass
-    else:
-        print("Missing", name)
-    print(len(globals()))
-
-def load_envs():
-    for v in needed_env:
-        load_env(v)
-
-def print_envs():
-    for v in needed_env:
-        try:
-            print(f'{v} = "{eval(v)}"')
-        except:
-            pass
-    print("", end="", flush=True)
-
-load_envs()
-print_envs()
 
 headers = {
     'access-token': API_KEY
@@ -90,7 +55,7 @@ def create_signal_set(cid, name, signals=[]):
         'namespace': 1,
     }
     resp = requests.post(
-        API_BASE + '/signal-sets', headers=headers, json=data)
+        c['API_BASE'] + '/signal-sets', headers=headers, json=data)
     setId = resp.json()
 
     # create signals other than 'ts', which is added automatically because
@@ -107,7 +72,7 @@ def create_signal_set(cid, name, signals=[]):
             'weight_list': 0,  # make signals visible in client
         }
 
-        resp = requests.post(API_BASE + '/signals/' + cid,
+        resp = requests.post(c['API_BASE'] + '/signals/' + cid,
                              headers=headers, json=data)
         # signalId = resp.json()
 
@@ -115,7 +80,7 @@ def create_signal_set(cid, name, signals=[]):
 
 
 def upload_record(setId, record):
-    resp = requests.post(API_BASE + '/signal-set-records/' +
+    resp = requests.post(c['API_BASE'] + '/signal-set-records/' +
                          str(setId), headers=headers, json=record)
     print("record text:", resp.text)
 
@@ -264,10 +229,10 @@ def wait_for_ivis():
     while True:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((API_HOST, int(API_PORT)))
+            s.connect((c['API_HOST'], int(c['API_PORT'])))
             s.sendall(b'\x00')
         except:
-            print(f"Waiting for IVIS at {API_HOST}:{API_PORT}", flush=True)
+            print(f"Waiting for IVIS at {c['API_HOST']}:{c['API_PORT']}", flush=True)
             time.sleep(1)
             continue
         else:
