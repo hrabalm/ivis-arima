@@ -8,6 +8,7 @@ import pendulum
 import uuid
 import multiprocessing
 import os
+import logging
 from config import config as c
 
 # this key will be inserted into db
@@ -38,12 +39,13 @@ def set_api_key(dbhost, dbport, dbuser, dbpass, dbname, key):
             database=dbname,
             password=dbpass,
         ) as connection:
-            print(connection)
+            logging.info("Successfully connected to MySQL.")
             with connection.cursor() as cursor:
                 cursor.execute(query)
                 connection.commit()
     except Error as e:
-        print(e)
+        logging.error("Failed to conntect to MySQL database.")
+        logging.error(e)
 
 
 def create_signal_set(cid, name, signals=[]):
@@ -82,8 +84,6 @@ def create_signal_set(cid, name, signals=[]):
 def upload_record(setId, record):
     resp = requests.post(c['API_BASE'] + '/signal-set-records/' +
                          str(setId), headers=headers, json=record)
-    print("record text:", resp.text)
-
 
 def shift_csv_file(filename, output, shift='y', ts_field='ts'):
     # firstly, find first and last timestamp
@@ -232,7 +232,7 @@ def wait_for_ivis():
             s.connect((c['API_HOST'], int(c['API_PORT'])))
             s.sendall(b'\x00')
         except:
-            print(f"Waiting for IVIS at {c['API_HOST']}:{c['API_PORT']}", flush=True)
+            logging.info(f"Waiting for IVIS at {c['API_HOST']}:{c['API_PORT']}")
             time.sleep(1)
             continue
         else:
