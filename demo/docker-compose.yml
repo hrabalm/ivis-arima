@@ -4,10 +4,10 @@ services:
   mariadb:
     image: mariadb:10.5
     environment:
-      - MYSQL_ROOT_PASSWORD=Chahw7aev9re
-      - MYSQL_DATABASE=ivis
-      - MYSQL_USER=ivis
-      - MYSQL_PASSWORD=Chahw7aev9re
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - arima-mariadb:/var/lib/mysql
     ports:
@@ -45,9 +45,9 @@ services:
       - API_BASE=http://ivis:8082/api
       - MYSQL_HOST=mariadb
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE=ivis
-      - MYSQL_USER=ivis
-      - MYSQL_PASSWORD=Chahw7aev9re
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
 volumes:
   arima-mariadb:
