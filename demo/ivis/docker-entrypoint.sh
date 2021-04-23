@@ -7,13 +7,19 @@ do
     sleep 1
 done
 
-# run knex seed
+# run knex seed not yet done
 (
-    cd knex
-    rm seeds/* # remove stock seeds
-    cp /seeds/* seeds/
-    ../node_modules/.bin/knex migrate:latest # we have to run migrations before seed
-    ../node_modules/.bin/knex seed:run
+    if [ -e /seeded ]
+    then
+        echo "Skipping knex seeds and migrations as they have already been run."
+    else
+        cd knex
+        rm seeds/* # remove stock seeds
+        cp /seeds/* seeds/
+        ../node_modules/.bin/knex migrate:latest # we have to run migrations before seed
+        ../node_modules/.bin/knex seed:run
+        touch /seeded
+    fi
 )
 
 if [ $NODE_WATCH ]
