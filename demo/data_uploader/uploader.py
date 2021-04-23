@@ -9,8 +9,8 @@ if __name__ == '__main__':
     hp.set_api_key(dbhost=c['MYSQL_HOST'],
                    dbport=c['MYSQL_PORT'],
                    dbuser=c['MYSQL_USER'],
-                   dbpass=c['MYSQL_PASS'],
-                   dbname=c['MYSQL_DB'],
+                   dbpass=c['MYSQL_PASSWORD'],
+                   dbname=c['MYSQL_DATABASE'],
                    key=c['API_KEY'])
 
     def f():

@@ -7,9 +7,9 @@ import logging
 config = {
     'MYSQL_HOST': None,
     'MYSQL_PORT': None,
-    'MYSQL_DB': None,
+    'MYSQL_DATABASE': None,
     'MYSQL_USER': None,
-    'MYSQL_PASS': None,
+    'MYSQL_PASSWORD': None,
     'API_HOST': None,
     'API_PORT': None,
     'API_BASE': None,  # e.g. http://ivis:8082/api
