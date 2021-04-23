@@ -4,8 +4,8 @@ const em = require('../ivis-core/server/lib/extension-manager');
 const path = require('path');
 
 em.on('app.installAPIRoutes', app => {
-    const embedApi = require('./routes/api/embed');
-    app.use('/api', embedApi);
+    const api = require('./routes/api/api');
+    app.use('/api', api);
 });
 
 // continue with ivis-core server entry point
