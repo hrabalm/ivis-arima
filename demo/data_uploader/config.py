@@ -17,19 +17,22 @@ config = {
     'API_KEY': '15f49b993fc23892eb07316dfedda9a10d23b491'
 }
 
+
 def load_config():
     failed = False
     for k in config.keys():
         if os.environ.get(k):
             config[k] = os.environ.get(k)
-        elif config[k]: # use default value if present
+        elif config[k]:  # use default value if present
             pass
         else:
             failed = True
             logging.error(f'Missing required environment variable {k}')
 
     if failed:
-        logging.critical('Failed to load configuration from environment variables.')
+        logging.critical(
+            'Failed to load configuration from environment variables.')
         sys.exit(1)
+
 
 load_config()

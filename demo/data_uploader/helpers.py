@@ -82,6 +82,7 @@ def upload_record(setId, record):
     resp = requests.post(c['API_BASE'] + '/signal-set-records/' +
                          str(setId), headers=headers, json=record)
 
+
 def shift_csv_file(filename, output, shift='y', ts_field='ts'):
     # firstly, find first and last timestamp
     first_ts = None
@@ -229,7 +230,8 @@ def wait_for_ivis():
             s.connect((c['API_HOST'], int(c['API_PORT'])))
             s.sendall(b'\x00')
         except:
-            logging.info(f"Waiting for IVIS at {c['API_HOST']}:{c['API_PORT']}")
+            logging.info(
+                f"Waiting for IVIS at {c['API_HOST']}:{c['API_PORT']}")
             time.sleep(1)
             continue
         else:
