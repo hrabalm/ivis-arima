@@ -11,7 +11,7 @@ if __name__ == '__main__':
                    dbuser=c['MYSQL_USER'],
                    dbpass=c['MYSQL_PASS'],
                    dbname=c['MYSQL_DB'],
-                   key=hp.API_KEY)
+                   key=c['API_KEY'])
 
     def f():
         hp.upload_csv_wait('co2w5_'+str(uuid.uuid4()),

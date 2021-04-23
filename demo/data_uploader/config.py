@@ -12,16 +12,17 @@ config = {
     'MYSQL_PASS': None,
     'API_HOST': None,
     'API_PORT': None,
-    'API_BASE': None  # e.g. http://ivis:8082/api
+    'API_BASE': None,  # e.g. http://ivis:8082/api
+    # this key will be inserted into db
+    'API_KEY': '15f49b993fc23892eb07316dfedda9a10d23b491'
 }
 
 def load_config():
     failed = False
     for k in config.keys():
-        config[k] = None
         if os.environ.get(k):
             config[k] = os.environ.get(k)
-        elif config[k]: # use default value
+        elif config[k]: # use default value if present
             pass
         else:
             failed = True

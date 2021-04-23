@@ -11,11 +11,8 @@ import os
 import logging
 from config import config as c
 
-# this key will be inserted into db
-API_KEY = '15f49b993fc23892eb07316dfedda9a10d23b491'
-
 headers = {
-    'access-token': API_KEY
+    'access-token': c['API_KEY']
 }
 
 DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
