@@ -136,7 +136,7 @@ def wait_for_ts(ts):
     import time
     now = pendulum.now()
     if ts > now:
-        print("Waiting", (ts-now).in_seconds(), "seconds.")
+        logging.info(f"Waiting {(ts-now).in_seconds()} seconds.")
         time.sleep((ts-now).in_seconds())
 
 
