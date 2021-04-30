@@ -1,45 +1,38 @@
-FROM node:14-buster
-
+FROM node:14-buster as base
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-venv \
     python3-pip \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
-
 COPY ivis-core/server/package*.json /opt/demo/ivis-core/server/
 COPY ivis-core/client/package*.json /opt/demo/ivis-core/client/
 COPY ivis-core/shared/package*.json /opt/demo/ivis-core/shared/
-
 WORKDIR /opt/demo/ivis-core
-
 # use all cores during binary builds
 ENV JOBS=max
-RUN for nd in server client shared; do (cd $nd && npm ci); done
+RUN for nd in server client shared; do (cd $nd && npm ci && npm cache clean --force); done
 
+
+FROM base as dev
+RUN npm install -g nodemon
+COPY ./docker-entrypoint-dev.sh /docker-entrypoint.sh
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+
+FROM base as production
 WORKDIR /opt/demo
-
 COPY ivis-core /opt/demo/ivis-core
-
 COPY server /opt/demo/server/
-
 COPY lib /opt/demo/ivis-core/server/lib/tasks/python/ivis/
-
 WORKDIR /opt/demo/ivis-core/server/lib/tasks/python/ivis
 RUN python3 -m pip install --upgrade setuptools wheel && python3 setup.py sdist bdist_wheel
-
 WORKDIR /opt/demo/ivis-core/
-
 RUN cd client && npm run build
-
 EXPOSE 8080 8081 8082
-
 WORKDIR /opt/demo/ivis-core/server
-
 COPY ./config/arima.yaml /opt/demo/ivis-core/server/config/arima.yaml
-
 COPY ./docker-entrypoint.sh /
-
 COPY ./seeds/ /seeds
-
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
+

@@ -34,7 +34,7 @@ services:
       - 8082:8082
     environment:
       - NODE_ENV=arima
-      - NODE_WATCH=1
+      #- DEBUG=knex:tx
 
   uploader:
     build: data_uploader
@@ -52,3 +52,4 @@ services:
 volumes:
   arima-mariadb:
   arima-elasticsearch:
+
