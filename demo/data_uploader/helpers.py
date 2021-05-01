@@ -17,7 +17,6 @@ headers = {
 
 DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"  # brackets are used for escaping
 
-
 def set_api_key(dbhost, dbport, dbuser, dbpass, dbname, key):
     """Directly set the access_token to key in the database
 
@@ -79,8 +78,18 @@ def create_signal_set(cid, name, signals=[]):
 
 
 def upload_record(setId, record):
-    resp = requests.post(c['API_BASE'] + '/signal-set-records/' +
+    # simple indefinite retries
+    while True:
+        try:
+            resp = requests.post(c['API_BASE'] + '/signal-set-records/' +
                          str(setId), headers=headers, json=record)
+            logging.info(resp.status_code)
+        except:
+            logging.warning(f"Failed insert record request, retrying...")
+            time.sleep(1)
+            continue
+        else:
+            break
 
 
 def shift_csv_file(filename, output, shift='y', ts_field='ts'):

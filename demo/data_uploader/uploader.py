@@ -2,7 +2,10 @@ import helpers as hp
 import time
 import uuid
 import multiprocessing
+import logging
 from config import config as c
+
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == '__main__':
     hp.wait_for_ivis()
