@@ -19,16 +19,25 @@ RUN npm install -g nodemon
 COPY ./docker-entrypoint-dev.sh /docker-entrypoint.sh
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
+# build client separately
+FROM base as build-client
+COPY ivis-core/client /opt/demo/ivis-core/client
+COPY ivis-core/shared /opt/demo/ivis-core/shared
+COPY ivis-core/locales /opt/demo/ivis-core/locales
+WORKDIR /opt/demo/ivis-core/client
+RUN cd /opt/demo/ivis-core/client && npm run build
 
 FROM base as production
 WORKDIR /opt/demo
-COPY ivis-core /opt/demo/ivis-core
+COPY ivis-core/server /opt/demo/ivis-core/server
+COPY ivis-core/shared /opt/demo/ivis-core/shared
+COPY ivis-core/locales /opt/demo/ivis-core/locales
 COPY server /opt/demo/server/
 COPY lib /opt/demo/ivis-core/server/lib/tasks/python/ivis/
 WORKDIR /opt/demo/ivis-core/server/lib/tasks/python/ivis
 RUN python3 -m pip install --upgrade setuptools wheel && python3 setup.py sdist bdist_wheel
 WORKDIR /opt/demo/ivis-core/
-RUN cd client && npm run build
+COPY --from=build-client /opt/demo/ivis-core/client /opt/demo/ivis-core/client
 EXPOSE 8080 8081 8082
 WORKDIR /opt/demo/ivis-core/server
 COPY ./config/arima.yaml /opt/demo/ivis-core/server/config/arima.yaml
