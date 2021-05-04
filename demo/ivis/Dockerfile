@@ -11,7 +11,7 @@ COPY ivis-core/shared/package*.json /opt/demo/ivis-core/shared/
 WORKDIR /opt/demo/ivis-core
 # use all cores during binary builds
 ENV JOBS=max
-RUN for nd in server client shared; do (cd $nd && npm ci && npm cache clean --force); done
+RUN for nd in server client shared; do (cd $nd && npm i && npm cache clean --force); done
 
 
 FROM base as dev
@@ -42,6 +42,5 @@ EXPOSE 8080 8081 8082
 WORKDIR /opt/demo/ivis-core/server
 COPY ./config/arima.yaml /opt/demo/ivis-core/server/config/arima.yaml
 COPY ./docker-entrypoint.sh /
-COPY ./seeds/ /seeds
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
