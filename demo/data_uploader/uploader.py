@@ -3,11 +3,17 @@ import time
 import uuid
 import multiprocessing
 import logging
+import sys
+import signal
 from config import config as c
 
 logging.basicConfig(level=logging.INFO)
 
+def handler(signum, frame):
+    sys.exit(1)
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, handler)
     hp.wait_for_ivis()
     hp.set_api_key(dbhost=c['MYSQL_HOST'],
                    dbport=c['MYSQL_PORT'],
