@@ -1,4 +1,4 @@
-FROM node:14-buster as base
+FROM node:12-buster as base
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-venv \
@@ -21,9 +21,9 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 # build client separately
 FROM base as build-client
-COPY ivis-core/client /opt/demo/ivis-core/client
-COPY ivis-core/shared /opt/demo/ivis-core/shared
-COPY ivis-core/locales /opt/demo/ivis-core/locales
+COPY ivis-core/client /opt/demo/ivis-core/client/
+COPY ivis-core/shared /opt/demo/ivis-core/shared/
+COPY ivis-core/locales /opt/demo/ivis-core/locales/
 WORKDIR /opt/demo/ivis-core/client
 RUN cd /opt/demo/ivis-core/client && npm run build
 
