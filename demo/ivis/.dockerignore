@@ -1,2 +1,5 @@
 **/.git
 #**/node_modules
+./ivis-core/server/node_modules
+./ivis-core/client/node_modules
+./ivis-core/shared/node_modules

@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 COPY ivis-core/server/package*.json /opt/demo/ivis-core/server/
-COPY ivis-core/client/package*.json /opt/demo/ivis-core/client/
+COPY ivis-core/client/package.json /opt/demo/ivis-core/client/
 COPY ivis-core/shared/package*.json /opt/demo/ivis-core/shared/
 WORKDIR /opt/demo/ivis-core
 # use all cores during binary builds
@@ -21,9 +21,9 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 # build client separately
 FROM base as build-client
-COPY ivis-core/client /opt/demo/ivis-core/client/
-COPY ivis-core/shared /opt/demo/ivis-core/shared/
-COPY ivis-core/locales /opt/demo/ivis-core/locales/
+COPY ivis-core/client/. /opt/demo/ivis-core/client/
+COPY ivis-core/shared/. /opt/demo/ivis-core/shared/
+COPY ivis-core/locales/. /opt/demo/ivis-core/locales/
 WORKDIR /opt/demo/ivis-core/client
 RUN cd /opt/demo/ivis-core/client && npm run build
 
