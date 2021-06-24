@@ -6,15 +6,6 @@ const signalSets = require('../../../ivis-core/server/models/signal-sets');
 const signals = require('../../../ivis-core/server/models/signals');
 const { castToInteger } = require('../../../ivis-core/server/lib/helpers');
 
-
-router.getAsync('/predictions/:modelId', passport.loggedIn, async (req, res) => {
-    return res.json();
-});
-
-router.postAsync('/signal-set/:signalSetCid', passport.loggedIn, async (req, res) => {
-    return res.json();
-});
-
 router.postAsync('/signal-sets', passport.loggedIn, async (req, res) => {
     return res.json(await signalSets.create(req.context, req.body));
 });
