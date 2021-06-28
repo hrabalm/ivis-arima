@@ -27,12 +27,20 @@ if __name__ == '__main__':
                            'CO2 Wait 5s', 'test.csv', 1000, wait_seconds=5)
 
     def g():
-        hp.upload_csv_wait('co2w1_'+str(uuid.uuid4()), 'CO2 Wait 1s',
-                           'test.csv', 1000, wait_seconds=1)
+        hp.upload_csv_wait('co2w10_'+str(uuid.uuid4()), 'CO2 Wait 10s',
+                           'renamed.csv', 1000, wait_seconds=10)
+
+    def h():
+        hp.upload_csv_wait(f"ALO_{str(uuid.uuid4())}", "ALO Wait 10s", "ALO_daily.csv", 15000, wait_seconds=10)
+
+    def i():
+        hp.upload_csv_wait(f"ALO_weekly", "ALO Weekly Wait 10s", "ALO_weekly.csv", 1500, wait_seconds=10)
 
     pm = hp.ProcessManager()
     pm.add_process(f)
     pm.add_process(g)
+    pm.add_process(h)
+    pm.add_process(i)
 
     pm.start()
     pm.join()
