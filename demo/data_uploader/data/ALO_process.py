@@ -39,8 +39,9 @@ df = pandas.read_csv('ALO.csv', index_col='valid')
 df.index.rename('ts', inplace=True)  # rename datetime field to 'ts'
 df.index = pandas.to_datetime(df.index)  # convert it to datetime
 
-# drop missing values
-df.dropna()
+# drop missing values and the 'station' column
+df.dropna(inplace=True)
+df.drop(columns=['station'], inplace=True)
 
 # earlier dates contain very large periods of missing data, so we will only
 # consider the date since March 1960
