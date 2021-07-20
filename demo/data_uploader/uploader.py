@@ -23,10 +23,10 @@ if __name__ == '__main__':
                    key=c['API_KEY'])
 
     def h():
-        hp.upload_csv_wait(f"ALO_{str(uuid.uuid4())}", "ALO Wait 10s", "ALO_daily.csv", 15000, wait_seconds=10)
+        hp.upload_csv_wait(f"ALO_{str(uuid.uuid4())}", "ALO Wait 10s", "data/ALO_daily.csv", 15000, wait_seconds=10)
 
     def i():
-        hp.upload_csv_wait(f"ALO_weekly", "ALO Weekly Wait 10s", "ALO_weekly.csv", 1500, wait_seconds=10)
+        hp.upload_csv_wait(f"ALO_weekly", "ALO Weekly Wait 10s", "data/ALO_weekly.csv", 1500, wait_seconds=10)
 
     pm = hp.ProcessManager()
 
