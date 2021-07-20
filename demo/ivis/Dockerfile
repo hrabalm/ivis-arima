@@ -33,7 +33,6 @@ COPY ivis-core/server /opt/demo/ivis-core/server
 COPY ivis-core/shared /opt/demo/ivis-core/shared
 COPY ivis-core/locales /opt/demo/ivis-core/locales
 COPY server /opt/demo/server/
-COPY lib /opt/demo/ivis-core/server/lib/tasks/python/ivis/
 WORKDIR /opt/demo/ivis-core/server/lib/tasks/python/ivis
 RUN python3 -m pip install --upgrade setuptools wheel && python3 setup.py sdist bdist_wheel
 WORKDIR /opt/demo/ivis-core/
