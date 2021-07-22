@@ -17,7 +17,7 @@ RUN for nd in server client shared; do (cd $nd && npm i && npm cache clean --for
 FROM base as dev
 RUN npm install -g nodemon
 COPY ./docker-entrypoint-dev.sh /docker-entrypoint.sh
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "bash", "/docker-entrypoint.sh" ]
 
 # build client separately
 FROM base as build-client
@@ -41,5 +41,5 @@ EXPOSE 8080 8081 8082
 WORKDIR /opt/demo/ivis-core/server
 COPY ./config/arima.yaml /opt/demo/ivis-core/server/config/arima.yaml
 COPY ./docker-entrypoint.sh /
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "bash", "/docker-entrypoint.sh" ]
 
